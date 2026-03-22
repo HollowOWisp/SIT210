@@ -1,0 +1,58 @@
+const int porchLightPin = 12;
+const int hallwayLightPin = 10;
+const int switchPin = 5;
+
+const unsigned long porchDuration = 30000;   // 30 sec
+const unsigned long hallwayDuration = 60000; // 60 sec
+
+unsigned long porchStartTime = 0;
+unsigned long hallwayStartTime = 0;
+
+bool porchOn = false;
+bool hallwayOn = false;
+
+void setup() {
+  pinMode(porchLightPin, OUTPUT);
+  pinMode(hallwayLightPin, OUTPUT);
+  pinMode(switchPin, INPUT_PULLUP);
+}
+
+void loop() {
+
+  if (isSwitchPressed()) {
+    turnOnLights();
+    delay(200); // debounce
+  }
+
+  updatePorchLight();
+  updateHallwayLight();
+}
+
+bool isSwitchPressed() {
+  return digitalRead(switchPin) == LOW;
+}
+
+void turnOnLights() {
+  digitalWrite(porchLightPin, HIGH);
+  digitalWrite(hallwayLightPin, HIGH);
+
+  porchStartTime = millis();
+  hallwayStartTime = millis();
+
+  porchOn = true;
+  hallwayOn = true;
+}
+
+void updatePorchLight() {
+  if (porchOn && millis() - porchStartTime >= porchDuration) {
+    digitalWrite(porchLightPin, LOW);
+    porchOn = false;
+  }
+}
+
+void updateHallwayLight() {
+  if (hallwayOn && millis() - hallwayStartTime >= hallwayDuration) {
+    digitalWrite(hallwayLightPin, LOW);
+    hallwayOn = false;
+  }
+}
